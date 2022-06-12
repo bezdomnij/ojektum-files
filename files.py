@@ -14,23 +14,24 @@ def main():
     # dir_list = [f for f in rootdir.resolve().glob('**/*') if f.is_dir()]
     dir_list = [f for f in rootdir.glob('**/*') if f.is_dir()]
 
-    modetimes = [(datetime.utcfromtimestamp(int(f.stat().st_mtime)), f) for f in interesting]
-    modetimes.sort(reverse=True)
+    modtimes = [(datetime.utcfromtimestamp(int(f.stat().st_mtime)), f) for f in interesting]
+    modtimes.sort(reverse=True)
     dirs = set()
-    for f in modetimes:
+    for f in modtimes:
         if f[0].date() > datetime.strptime('2022-01-01', '%Y-%m-%d').date():
             # print(f[0], f[1].parent)
             print(f"{f[0]}, M: {f[1].parents[1].name} | S: {f[1].parents[0].name} | FILE: {f[1].name}")
-        # measure_timediff(f)
+        # print('*' * 10)
+        measure_timediff(f, store='bookmate')
 
 
-def measure_timediff(f):
+def measure_timediff(f, store=''):
     if f[0].date() > datetime.strptime('2021-01-01', '%Y-%m-%d').date():
         file_date = f[0]
         dir_date = datetime.utcfromtimestamp(f[1].parent.stat().st_mtime)
         time_diff = round((file_date - dir_date).total_seconds() / 3600 / 24, 2)
         # if dir_date > f[0]:
-        if time_diff < -3.0 and f[1].parent.name == 'bookmate':
+        if time_diff < -3.0 and f[1].parent.name == store:
             print(file_date, f[1].stem, dir_date, f[1].parent.name, time_diff)
 
         # print(f"{f[0]}, M: {f[1].parents[1].name} | S: {f[1].parents[0].name} | FILE: {f[1].name}")
